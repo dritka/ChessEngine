@@ -8,6 +8,7 @@ public class Piece {
     public int row;
     public int col;
     public int value;
+    public int moves;
     public String imagePath;
     public List<int[]> validMoves;
     public int[][] directions;
@@ -18,6 +19,7 @@ public class Piece {
         this.row = row;
         this.col = col;
         this.value = value;
+        this.moves = 0;
         this.imagePath = imagePath;
         validMoves = new ArrayList<>();
         directions = calculateDirections();
@@ -48,7 +50,11 @@ public class Piece {
                 return new int[][] { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
             }
 
-            case QUEEN, KING -> {
+            case QUEEN-> {
+                return new int[][] { {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1} };
+            }
+
+            case KING -> {
                 return new int[][] { {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1} };
             }
         }

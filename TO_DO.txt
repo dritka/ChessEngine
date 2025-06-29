@@ -1,0 +1,4 @@
+Functionalities
+- Implement castling
+- Implement en passant
+- Implement pawn promotion

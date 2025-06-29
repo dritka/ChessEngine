@@ -1,17 +1,17 @@
 import Enums.*;
 
-import java.io.*;
+import java.awt.*;
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 import java.awt.Color;
 import java.util.List;
-
-import Constants.CONST;
-
 import java.awt.event.*;
-import java.util.ArrayList;
-import javax.sound.sampled.*;
+
+import Constants.CONST.*;
+import static Enums.Type.*;
+import static Enums.SoundType.*;
+import static Constants.CONST.*;
 
 public class Board extends JPanel {
     public static Enums.Color playerTurn;
@@ -24,18 +24,18 @@ public class Board extends JPanel {
     public static Square startingSquare;
 
 
-    public HashMap<HashMap<Type, Enums.Color>, String> imagePaths;
+    public static Map<Map<Type, Enums.Color>, String> imagePaths;
 
     public static List<Color[]> themes;
     public static Color[] theme;
     public static int themeIndex;
 
     public Board() {
-        loadThemes();
-        loadImages();
+        PreProcess.loadThemes();
+        PreProcess.loadImages();
 
         playerTurn = Enums.Color.WHITE;
-        board = new Square[CONST.ROWS][CONST.COLS];
+        board = new Square[ROWS][COLS];
         whitePieces = new ArrayList<>();
         blackPieces = new ArrayList<>();
         pieceToMove = null;
@@ -43,9 +43,9 @@ public class Board extends JPanel {
         themeIndex = 0;
         theme = themes.get(themeIndex);
 
-        this.setPreferredSize(new Dimension(CONST.WIDTH, CONST.HEIGHT));
+        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.setBackground(Color.BLACK);
-        this.setLayout(new GridLayout(CONST.ROWS, CONST.COLS));
+        this.setLayout(new GridLayout(ROWS, COLS));
         this.setFocusable(true);
 
         // KEY BINDINGS
@@ -58,11 +58,12 @@ public class Board extends JPanel {
         });
 
         setup();
+        SoundEffects.playSound(GAME_START);
     }
 
     private void setup() {
-        for (int row = 0; row < CONST.ROWS; row++) {
-            for (int col = 0; col < CONST.COLS; col++) {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
                 Square square = squareSetup(row, col);
                 board[row][col] = square;
                 this.add(square);
@@ -75,7 +76,7 @@ public class Board extends JPanel {
         HashMap<Type, Enums.Color> map = new HashMap<>();
         map.put(Type.PAWN, Enums.Color.WHITE);
 
-        for (int col = 0; col < CONST.COLS; col++) {
+        for (int col = 0; col < COLS; col++) {
             piece = new Piece(Type.PAWN, Enums.Color.WHITE, 6, col, 1, imagePaths.get(map));
             addPiece(piece);
         }
@@ -103,14 +104,14 @@ public class Board extends JPanel {
         piece = new Piece(Type.QUEEN, Enums.Color.WHITE, 7, 3, 9, imagePaths.get(map));
         addPiece(piece);
         map.clear();
-        map.put(Type.KING, Enums.Color.WHITE);
-        piece = new Piece(Type.KING, Enums.Color.WHITE, 7, 4, Integer.MAX_VALUE, imagePaths.get(map));
+        map.put(KING, Enums.Color.WHITE);
+        piece = new Piece(KING, Enums.Color.WHITE, 7, 4, Integer.MAX_VALUE, imagePaths.get(map));
         addPiece(piece);
 
         map.clear();
         map.put(Type.PAWN, Enums.Color.BLACK);
         // CODE TO SET UP THE BLACK PIECES
-        for (int col = 0; col < CONST.COLS; col++) {
+        for (int col = 0; col < COLS; col++) {
             piece = new Piece(Type.PAWN, Enums.Color.BLACK, 1, col, 1, imagePaths.get(map));
             addPiece(piece);
         }
@@ -138,8 +139,8 @@ public class Board extends JPanel {
         piece = new Piece(Type.QUEEN, Enums.Color.BLACK, 0, 3, 9, imagePaths.get(map));
         addPiece(piece);
         map.clear();
-        map.put(Type.KING, Enums.Color.BLACK);
-        piece = new Piece(Type.KING, Enums.Color.BLACK, 0, 4, Integer.MAX_VALUE, imagePaths.get(map));
+        map.put(KING, Enums.Color.BLACK);
+        piece = new Piece(KING, Enums.Color.BLACK, 0, 4, Integer.MAX_VALUE, imagePaths.get(map));
         addPiece(piece);
 
         calculateMoves();
@@ -182,15 +183,23 @@ public class Board extends JPanel {
 
     public static void calculateMoves() {
         for (Piece piece : whitePieces) {
-            calculate(piece);
+            try {
+                calculate(piece, Enums.Color.WHITE);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
 
         for (Piece piece : blackPieces) {
-            calculate(piece);
+            try {
+                calculate(piece, Enums.Color.BLACK);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
-    public static void calculate(Piece piece) {
+    public static void calculate(Piece piece, Enums.Color color) throws Exception {
         piece.clearValidMoves();
         int[][] directions = piece.directions;
 
@@ -199,51 +208,39 @@ public class Board extends JPanel {
                 int[] direction = directions[0];
                 int newRow = piece.row + direction[0];
                 int newCol = piece.col + direction[1];
-                Square square = getSquare(newRow, newCol);
-                if (square.isEmpty()) {
+                if (isValidMove(newRow, newCol, color)) {
                     piece.addValidMove(newRow, newCol);
 
                     direction = directions[1];
                     newRow = piece.row + direction[0];
                     newCol = piece.col + direction[1];
-                    square = getSquare(newRow, newCol);
-                    if ((piece.row == 6 || piece.row == 1) && square.isEmpty()) {
+                    Square square = getSquare(newRow, newCol);
+                    if (piece.moves == 0 && square.isEmpty())
                         piece.addValidMove(newRow, newCol);
-                    }
                 }
 
                 direction = directions[2];
                 newRow = piece.row + direction[0];
                 newCol = piece.col + direction[1];
-                if (isInBounds(newRow, newCol)) {
-                    square = getSquare(newRow, newCol);
-                    if (!square.isEmpty() && !square.isTeamPiece(piece)) {
-                        piece.addValidMove(newRow, newCol);
-                    }
-                }
+                if (isValidMove(newRow, newCol, color) && !getSquare(newRow, newCol).isEmpty())
+                    piece.addValidMove(newRow, newCol);
 
                 direction = directions[3];
                 newRow = piece.row + direction[0];
                 newCol = piece.col + direction[1];
-                if (isInBounds(newRow, newCol)) {
-                    square = getSquare(newRow, newCol);
-                    if (!square.isEmpty() && !square.isTeamPiece(piece)) {
-                        piece.addValidMove(newRow, newCol);
-                    }
-                }
+                if (isValidMove(newRow, newCol, color) && !getSquare(newRow, newCol).isEmpty())
+                    piece.addValidMove(newRow, newCol);
             }
 
-            case KNIGHT, KING -> {
+            case KING, KNIGHT -> {
+                if (piece.pieceType.equals(KING)) // checkCastle();
+
                 for (int[] dir : directions) {
                     int newRow = piece.row + dir[0];
                     int newCol = piece.col + dir[1];
 
-                    if (isInBounds(newRow, newCol)) {
-                        Square square = getSquare(newRow, newCol);
-                        if (square.isEmpty() || (!square.isEmpty() && !square.isTeamPiece(piece))) {
-                            piece.addValidMove(newRow, newCol);
-                        }
-                    }
+                    if (isValidMove(newRow, newCol, color))
+                        piece.addValidMove(newRow, newCol);
                 }
             }
 
@@ -251,73 +248,38 @@ public class Board extends JPanel {
                 for (int[] dir : directions) {
                     int multiplier = 1;
 
-                    while (isInBounds(piece.row + dir[0] * multiplier, piece.col + dir[1] * multiplier) && getSquare(piece.row + dir[0] * multiplier, piece.col + dir[1] * multiplier).isEmpty()) {
-                        piece.addValidMove(piece.row + dir[0] * multiplier, piece.col + dir[1] * multiplier);
+                    while (isInBounds(piece.row + dir[0] * multiplier, piece.col + dir[1] * multiplier)) {
+                        int row = piece.row + dir[0] * multiplier;
+                        int col = piece.col + dir[1] * multiplier;
+                        Square square = getSquare(row, col);
+                        if (!square.isEmpty()) break;
+                        piece.addValidMove(row, col);
                         multiplier++;
                     }
 
-                    if (isInBounds(piece.row + dir[0] * multiplier, piece.col + dir[1] * multiplier)) {
-                        int newRow = piece.row + dir[0] * multiplier;
-                        int newCol = piece.col + dir[1] * multiplier;
-                        Square square = getSquare(newRow, newCol);
-                        if (!square.isTeamPiece(piece)) {
-                            piece.addValidMove(piece.row + dir[0] * multiplier, piece.col + dir[1] * multiplier);
-                        }
-                    }
+                    int row = piece.row + dir[0] * multiplier;
+                    int col = piece.col + dir[1] * multiplier;
+                    if (isValidMove(row, col, color))
+                        piece.addValidMove(row, col);
                 }
             }
 
-            default -> throw new IllegalStateException("Unexpected value: " + piece.pieceType);
+            default -> throw new Exception("Unexpected value: " + piece.pieceType); // Should never occur
         }
     }
 
-    public static boolean isInBounds(int row, int col) {
-        return (row >= 0 && row < CONST.ROWS) && (col >= 0 && col < CONST.COLS);
+    private static boolean isInBounds(int row, int col) {
+        return (row >= 0 && row < ROWS) && (col >= 0 && col < COLS);
     }
 
-    private void loadThemes() {
-        themes = new ArrayList<>();
-
-        try (Scanner scanner = new Scanner(new FileReader("D:\\Programming\\Java\\current-java-masterclass-remaster\\Chess\\src\\config\\board_themes.txt"))) {
-            scanner.useDelimiter(",");
-
-            while (scanner.hasNextLine()) {
-                String[] dark = scanner.next().split(" ");
-                scanner.skip(scanner.delimiter());
-                String[] light = scanner.next().split(" ");
-                scanner.skip(scanner.delimiter());
-                String[] move = scanner.nextLine().split(" ");
-
-                Color darkColor = new Color(Integer.parseInt(dark[0]), Integer.parseInt(dark[1]), Integer.parseInt(dark[2]));
-                Color lightColor = new Color(Integer.parseInt(light[0]), Integer.parseInt(light[1]), Integer.parseInt(light[2]));
-                Color moveColor = new Color(Integer.parseInt(move[0]), Integer.parseInt(move[1]), Integer.parseInt(move[2]));
-                Color[] theme = new Color[]{darkColor, lightColor, moveColor};
-                themes.add(theme);
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found exception: " + e.getMessage());
-        }
+    private static boolean isValidSquare(int row, int col, Enums.Color color) {
+        return board[row][col].isEmpty() ||
+               (!board[row][col].isEmpty() &&
+               !board[row][col].piece.pieceColor.equals(color));
     }
 
-    private void loadImages() {
-        imagePaths = new HashMap<>();
-
-        try (Scanner scanner = new Scanner(new FileReader("D:\\Programming\\Java\\current-java-masterclass-remaster\\Chess\\src\\config\\piece_themes\\default.txt"))) {
-            scanner.useDelimiter(",");
-
-            while (scanner.hasNextLine()) {
-                Type pieceType = Type.valueOf(scanner.next());
-                scanner.skip(scanner.delimiter());
-                Enums.Color pieceColor = Enums.Color.valueOf(scanner.next());
-                scanner.skip(scanner.delimiter());
-                String imagePath = scanner.nextLine();
-                HashMap<Type, Enums.Color> config = new HashMap<>();
-                config.put(pieceType, pieceColor);
-                imagePaths.put(config, imagePath);
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("FileNotFoundException: " + e.getMessage());
-        }
+    private static boolean isValidMove(int row, int col, Enums.Color color) {
+        return isInBounds(row, col) && isValidSquare(row, col, color);
     }
 
     private void changeTheme() {
@@ -325,8 +287,8 @@ public class Board extends JPanel {
         if (themeIndex == 7) themeIndex = 0;
         theme = themes.get(themeIndex);
 
-        for (int row = 0; row < CONST.ROWS; row++) {
-            for (int col = 0; col < CONST.COLS; col++) {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
                 Square square = board[row][col];
 
                 if (row % 2 == 0) {
@@ -350,29 +312,39 @@ public class Board extends JPanel {
         }
     }
 
-    public static void playMoveSound() {
-        File file = new File("D:\\Programming\\Java\\current-java-masterclass-remaster\\Chess\\src\\sounds\\move-self.wav");
+    public static void refresh() {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                Square square = Board.board[row][col];
+                Piece piece = square.piece;
+                Color color = square.color;
 
-        try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            throw new RuntimeException(e);
+                if (piece != null) {
+                    square.addPieceImage(piece.imagePath);
+                } else {
+                    square.addPieceImage(null);
+                }
+
+                square.setBackground(color);
+            }
         }
     }
 
-    public static void playCaptureSound() {
-        File file = new File("D:\\Programming\\Java\\current-java-masterclass-remaster\\Chess\\src\\sounds\\capture.wav");
+    /*
+    private void checkForCastle() {
+        Square firstRookSquare;
+        Square secondRookSquare;
+        Square kingSquare;
 
-        try {
-            AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioStream);
-            clip.start();
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-            throw new RuntimeException(e);
+        if (playerTurn.equals(Enums.Color.BLACK)) {
+            firstRookSquare = board[7][0];
+            secondRookSquare = board[7][7];
+            kingSquare = board[7][4];
+        } else {
+            firstRookSquare = board[0][0];
+            secondRookSquare = board[0][7];
+            kingSquare = board[0][4];
         }
     }
+     */
 }

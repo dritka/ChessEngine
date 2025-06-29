@@ -1,9 +1,11 @@
 import java.awt.*;
 
-import Constants.*;
-
 import javax.swing.*;
 import java.awt.event.*;
+
+import static Enums.Color.*;
+import static Constants.CONST.*;
+import static Enums.SoundType.*;
 
 public class Square extends JButton implements ActionListener {
     public Piece piece;
@@ -37,95 +39,66 @@ public class Square extends JButton implements ActionListener {
         return piece == null;
     }
 
+    /*
+    This method handles the case when the player
+    has already clicked the piece that they want
+    to move and have know chosen to move that piece
+    to one of its valid squares.
+     */
+    private boolean checkMoveOrCaptureConditions() {
+        return Board.pieceToMove != null &&
+               Board.pieceToMove.canReach(this.row, this.col) &&
+               (this.isEmpty() || (!this.isEmpty() &&
+               !Board.pieceToMove.pieceColor.equals(this.piece.pieceColor))) &&
+               (this.getBackground().equals(Board.themes.get(Board.themeIndex)[2]) ||
+               this.getBackground().equals(TEMP));
+    }
+
+    private boolean checkValidMovesConditions() {
+        return piece != null &&
+               Board.playerTurn.equals(piece.pieceColor);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (this.getBackground().equals(Board.themes.get(Board.themeIndex)[2])) {
-            if (Board.pieceToMove != null) {
-                if (Board.pieceToMove.canReach(this.row, this.col)) {
-                    if (this.isEmpty() || (!this.isEmpty() && !Board.pieceToMove.pieceColor.equals(this.piece.pieceColor))) {
-                        boolean emptySquare = this.isEmpty();
+        if (checkValidMovesConditions()) {
+            Board.startingSquare = this;
+            Board.pieceToMove = piece;
 
-                        if (Board.playerTurn.equals(Enums.Color.WHITE)) {
-                            Board.playerTurn = Enums.Color.BLACK;
-                        } else {
-                            Board.playerTurn = Enums.Color.WHITE;
-                        }
+            Board.refresh();
 
-                        Board.startingSquare.piece = null;
-                        Board.startingSquare.addPieceImage(null);
-                        Board.pieceToMove.row = this.row;
-                        Board.pieceToMove.col = this.col;
-                        this.piece = Board.pieceToMove;
-                        this.addPieceImage(Board.pieceToMove.imagePath);
-
-                        if (emptySquare) {
-                            Board.playMoveSound();
-                        } else {
-                            Board.playCaptureSound();
-                        }
-
-                        for (int row = 0; row < CONST.ROWS; row++) {
-                            for (int col = 0; col < CONST.COLS; col++) {
-                                Square square = Board.board[row][col];
-                                Color color = square.color;
-                                if (square.piece == null) square.addPieceImage(null);
-                                square.setBackground(color);
-                                Board.pieceToMove = null;
-                            }
-                        }
-
-                        Board.calculateMoves();
-                    }
-                }
+            for (int[] valid : piece.validMoves) {
+                Square square = Board.board[valid[0]][valid[1]];
+                if (square.piece != null && !square.piece.pieceColor.equals(piece.pieceColor))
+                    square.setBackground(TEMP);
+                else
+                    square.setBackground(Board.themes.get(Board.themeIndex)[2]);
             }
-        } else if (piece != null) {
-            if (Board.playerTurn.equals(piece.pieceColor)) {
-                Board.startingSquare = this;
-                Board.pieceToMove = piece;
+        } else if (checkMoveOrCaptureConditions()) {
+            boolean emptySquare = this.isEmpty();
 
-                for (int row = 0; row < CONST.ROWS; row++) {
-                    for (int col = 0; col < CONST.COLS; col++) {
-                        Square square = Board.board[row][col];
-                        Piece piece = square.piece;
-                        Color color = square.color;
+            Board.playerTurn = Board.playerTurn.equals(WHITE) ?
+                    BLACK : WHITE;
 
-                        if (piece != null) {
-                            square.addPieceImage(piece.imagePath);
-                        } else {
-                            square.addPieceImage(null);
-                        }
+            Board.startingSquare.piece = null;
+            Board.startingSquare.addPieceImage(null);
+            Board.pieceToMove.row = this.row;
+            Board.pieceToMove.col = this.col;
+            this.piece = Board.pieceToMove;
+            this.addPieceImage(Board.pieceToMove.imagePath);
 
-                        square.setBackground(color);
-                    }
-                }
-
-                for (int[] valid : piece.validMoves) {
-                    Square square = Board.board[valid[0]][valid[1]];
-
-                    if (square.isEmpty() || (!square.isEmpty() && !square.isTeamPiece(piece))) {
-                        square.setBackground(Board.themes.get(Board.themeIndex)[2]);
-                    }
-                }
-            }
+            if (emptySquare)
+                SoundEffects.playSound(MOVE);
+            else
+                SoundEffects.playSound(CAPTURE);
+            Board.pieceToMove.moves += 1;
+            Board.refresh();
+            Board.calculateMoves();
         } else {
             Board.startingSquare = null;
             Board.pieceToMove = null;
-
-            for (int row = 0; row < CONST.ROWS; row++) {
-                for (int col = 0; col < CONST.COLS; col++) {
-                    Square square = Board.board[row][col];
-                    Piece piece = square.piece;
-                    Color color = square.color;
-
-                    if (piece != null) {
-                        square.addPieceImage(piece.imagePath);
-                    } else {
-                        square.addPieceImage(null);
-                    }
-
-                    square.setBackground(color);
-                }
-            }
+            Board.refresh();
+            SoundEffects.playSound(ILLEGAL);
         }
     }
 }
