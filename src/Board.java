@@ -212,22 +212,12 @@ public class Board extends JPanel {
                     direction = directions[1];
                     newRow = piece.row + direction[0];
                     newCol = piece.col + direction[1];
-                    Square square = getSquare(newRow, newCol);
-                    if (piece.moves == 0 && square.isEmpty())
+                    if (piece.moves == 0 && isInBounds(newRow, newCol) && getSquare(newRow, newCol).isEmpty())
                         piece.addValidMove(newRow, newCol);
                 }
 
-                direction = directions[2];
-                newRow = piece.row + direction[0];
-                newCol = piece.col + direction[1];
-                if (isValidMove(newRow, newCol, color) && !getSquare(newRow, newCol).isEmpty())
-                    piece.addValidMove(newRow, newCol);
-
-                direction = directions[3];
-                newRow = piece.row + direction[0];
-                newCol = piece.col + direction[1];
-                if (isValidMove(newRow, newCol, color) && !getSquare(newRow, newCol).isEmpty())
-                    piece.addValidMove(newRow, newCol);
+                exploreDiagonalMoves(piece, color, directions[2]);
+                exploreDiagonalMoves(piece, color, directions[3]);
             }
 
             case KING, KNIGHT -> {
@@ -262,6 +252,13 @@ public class Board extends JPanel {
                 }
             }
         }
+    }
+
+    private static void exploreDiagonalMoves(Piece piece, Enums.Color color, int[] direction) {
+        int newRow = piece.row + direction[0];
+        int newCol = piece.col + direction[1];
+        if (isValidMove(newRow, newCol, color) && !getSquare(newRow, newCol).isEmpty())
+            piece.addValidMove(newRow, newCol);
     }
 
     private static boolean isInBounds(int row, int col) {
@@ -306,7 +303,7 @@ public class Board extends JPanel {
 
     private static boolean canPromote(Piece piece) {
         if (!piece.pieceType.equals(PAWN)) return false;
-        return ((piece.pieceColor.equals(WHITE) && piece.row == 0) || (piece.pieceColor.equals(BLACK) && piece.row == 0));
+        return ((piece.pieceColor.equals(WHITE) && piece.row == 0) || (piece.pieceColor.equals(BLACK) && piece.row == 7));
     }
 
     /*
