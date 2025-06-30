@@ -1,6 +1,8 @@
 import Enums.*;
 
 import java.util.*;
+import static Enums.Type.*;
+import static Enums.Castle.*;
 
 public class Piece {
     public Type pieceType;
@@ -13,6 +15,8 @@ public class Piece {
     public List<int[]> validMoves;
     public int[][] directions;
 
+    public Castle castled = NOT_ALLOWED;
+
     public Piece(Type pieceType, Color pieceColor, int row, int col, int value, String imagePath) {
         this.pieceType = pieceType;
         this.pieceColor = pieceColor;
@@ -23,6 +27,10 @@ public class Piece {
         this.imagePath = imagePath;
         validMoves = new ArrayList<>();
         directions = calculateDirections();
+
+        if (pieceType.equals(KING)) {
+            castled = NO;
+        }
     }
 
     public int[][] calculateDirections() {
@@ -63,10 +71,8 @@ public class Piece {
     }
 
     public boolean canReach(int row, int col) {
-        for (int[] valid : validMoves) {
+        for (int[] valid : validMoves)
             if (valid[0] == row && valid[1] == col) return true;
-        }
-
         return false;
     }
 

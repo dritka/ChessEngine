@@ -10,6 +10,7 @@ import java.util.List;
 import java.awt.event.*;
 
 import static Enums.Type.*;
+import static Enums.Castle.*;
 import static Enums.SoundType.*;
 import static Constants.CONST.*;
 
@@ -233,7 +234,7 @@ public class Board extends JPanel {
             }
 
             case KING, KNIGHT -> {
-                if (piece.pieceType.equals(KING)) // checkCastle();
+                if (piece.pieceType.equals(KING) && piece.castled.equals(NO)) checkForCastle();
 
                 for (int[] dir : directions) {
                     int newRow = piece.row + dir[0];
@@ -330,21 +331,70 @@ public class Board extends JPanel {
         }
     }
 
-    /*
-    private void checkForCastle() {
+    private static boolean checkQueenSideCastlingConditions(Square kingSquare, Square rookSquare, Square inBetweenFirst, Square inBetweenSecond, Square inBetweenThird) {
+        return kingSquare.piece.moves == 0 &&
+               rookSquare.piece.moves == 0 &&
+               inBetweenFirst.isEmpty() &&
+               inBetweenSecond.isEmpty() &&
+               inBetweenThird.isEmpty();
+    }
+
+    private static boolean checkKingSideCastlingConditions(Square kingSquare, Square rookSquare, Square inBetweenFirst, Square inBetweenSecond) {
+        return kingSquare.piece.moves == 0 &&
+               rookSquare.piece.moves == 0 &&
+               inBetweenFirst.isEmpty() &&
+               inBetweenSecond.isEmpty();
+    }
+
+    private static void checkForCastle() {
         Square firstRookSquare;
         Square secondRookSquare;
         Square kingSquare;
 
         if (playerTurn.equals(Enums.Color.BLACK)) {
-            firstRookSquare = board[7][0];
-            secondRookSquare = board[7][7];
-            kingSquare = board[7][4];
-        } else {
             firstRookSquare = board[0][0];
             secondRookSquare = board[0][7];
             kingSquare = board[0][4];
+
+            // Get the squares in between
+            Square inBetweenFirst = board[0][1];
+            Square inBetweenSecond = board[0][2];
+            Square inBetweenThird = board[0][3];
+            Square inBetweenFourth = board[0][5];
+            Square inBetweenFifth = board[0][6];
+
+            boolean canCastleQueenSide = checkQueenSideCastlingConditions(kingSquare, firstRookSquare, inBetweenFirst, inBetweenSecond, inBetweenThird);
+            boolean canCastleKingSide = checkKingSideCastlingConditions(kingSquare, secondRookSquare, inBetweenFourth, inBetweenFifth);
+
+            if (canCastleKingSide) {
+                kingSquare.piece.castled = YES;
+                kingSquare.piece.addValidMove(0, 6);
+            } else if (canCastleQueenSide) {
+                kingSquare.piece.castled = YES;
+                kingSquare.piece.addValidMove(0, 2);
+            }
+        } else {
+            firstRookSquare = board[7][0];
+            secondRookSquare = board[7][7];
+            kingSquare = board[7][4];
+
+            // Get the squares in between
+            Square inBetweenFirst = board[7][1];
+            Square inBetweenSecond = board[7][2];
+            Square inBetweenThird = board[7][3];
+            Square inBetweenFourth = board[7][5];
+            Square inBetweenFifth = board[7][6];
+
+            boolean canCastleQueenSide = checkQueenSideCastlingConditions(kingSquare, firstRookSquare, inBetweenFirst, inBetweenSecond, inBetweenThird);
+            boolean canCastleKingSide = checkKingSideCastlingConditions(kingSquare, secondRookSquare, inBetweenFourth, inBetweenFifth);
+
+            if (canCastleKingSide) {
+                kingSquare.piece.castled = YES;
+                kingSquare.piece.addValidMove(7, 6);
+            } else if (canCastleQueenSide) {
+                kingSquare.piece.castled = YES;
+                kingSquare.piece.addValidMove(7, 2);
+            }
         }
     }
-     */
 }

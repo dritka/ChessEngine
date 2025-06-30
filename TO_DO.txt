@@ -1,4 +1,4 @@
 Functionalities
-- Implement castling
+- Test castling?
 - Implement en passant
 - Implement pawn promotion
