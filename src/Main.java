@@ -1,19 +1,22 @@
 import java.awt.*;
 import javax.swing.*;
 
-public class Main extends JFrame {
+public class Main {
+
+    public static JFrame frame;
 
     public static void main(String[] args) {
-        new Main();
+        SwingUtilities.invokeLater(Main::new);
     }
 
     public Main() {
-        this.setTitle("Chess (:!");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setResizable(false);
-        this.add(new Board());
-        this.pack();
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
+        frame = new JFrame();
+        frame.setTitle("Chess (:!");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(false);
+        frame.add(new Board());
+        frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
 }

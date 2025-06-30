@@ -28,9 +28,7 @@ public class Piece {
         validMoves = new ArrayList<>();
         directions = calculateDirections();
 
-        if (pieceType.equals(KING)) {
-            castled = NO;
-        }
+        if (pieceType.equals(KING)) castled = NO;
     }
 
     public int[][] calculateDirections() {
@@ -58,13 +56,10 @@ public class Piece {
                 return new int[][] { {1, 0}, {0, 1}, {-1, 0}, {0, -1} };
             }
 
-            case QUEEN-> {
+            case QUEEN, KING -> {
                 return new int[][] { {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1} };
             }
 
-            case KING -> {
-                return new int[][] { {1, 0}, {1, 1}, {0, 1}, {-1, 1}, {-1, 0}, {-1, -1}, {0, -1}, {1, -1} };
-            }
         }
 
         return null;
