@@ -59,7 +59,6 @@ public class PromotionWindow extends JFrame implements ActionListener {
         this.add(mainPanel);
 
         this.setTitle("Promotion chooser");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.pack();
         this.setVisible(true);

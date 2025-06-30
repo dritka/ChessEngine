@@ -151,17 +151,15 @@ public class Board extends JPanel {
         Square square;
 
         if (row % 2 == 0) {
-            if (col % 2 == 0) {
+            if (col % 2 == 0)
                 square = new Square(theme[1], row, col);
-            } else {
+            else
                 square = new Square(theme[0], row, col);
-            }
         } else {
-            if (col % 2 == 0) {
+            if (col % 2 == 0)
                 square = new Square(theme[0], row, col);
-            } else {
+            else
                 square = new Square(theme[1], row, col);
-            }
         }
         return square;
     }
