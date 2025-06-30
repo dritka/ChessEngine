@@ -5,6 +5,7 @@ import java.util.*;
 import javax.swing.*;
 import java.awt.Color;
 import java.util.List;
+import java.awt.event.*;
 
 import static Enums.Type.*;
 import static Enums.Color.*;
@@ -48,7 +49,7 @@ public class Board extends JPanel {
         this.setLayout(new GridLayout(ROWS, COLS));
         this.setFocusable(true);
 
-        /* KEY BINDINGS
+        // KEY BINDINGS
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('t'), "t");
         this.getActionMap().put("t", new AbstractAction() {
             @Override
@@ -56,7 +57,6 @@ public class Board extends JPanel {
                 changeTheme();
             }
         });
-         */
 
         setup();
         SoundEffects.playSound(GAME_START);
@@ -234,7 +234,7 @@ public class Board extends JPanel {
             }
 
             case KING, KNIGHT -> {
-                if (piece.pieceType.equals(KING) && piece.castled.equals(NO)) checkForCastle();
+                if (piece.pieceType.equals(KING) && piece.castled.equals(NO)) checkForCastle(color);
 
                 for (int[] dir : directions) {
                     int newRow = piece.row + dir[0];
@@ -345,13 +345,17 @@ public class Board extends JPanel {
     public static boolean isCastling(Square to) {
         Piece piece = pieceToMove;
         return piece.pieceType.equals(KING) &&
-               (piece.canReach(0, 6) ||
-               piece.canReach(0, 2) ||
-               piece.canReach(7, 6) ||
-               piece.canReach(7, 2));
+               ((to.row == 0 && to.col == 6) ||
+               (to.row == 0 && to.col == 2) ||
+               (to.row == 7 && to.col == 6) ||
+               to.row == 7 && to.col == 2);
     }
 
-    private static boolean checkQueenSideCastlingConditions(Square kingSquare, Square rookSquare, Square inBetweenFirst, Square inBetweenSecond, Square inBetweenThird) {
+    private static boolean checkQueenSideCastlingConditions(Square kingSquare,
+                                                            Square rookSquare,
+                                                            Square inBetweenFirst,
+                                                            Square inBetweenSecond,
+                                                            Square inBetweenThird) {
         return kingSquare.piece.moves == 0 &&
                rookSquare.piece.moves == 0 &&
                inBetweenFirst.isEmpty() &&
@@ -359,19 +363,22 @@ public class Board extends JPanel {
                inBetweenThird.isEmpty();
     }
 
-    private static boolean checkKingSideCastlingConditions(Square kingSquare, Square rookSquare, Square inBetweenFirst, Square inBetweenSecond) {
+    private static boolean checkKingSideCastlingConditions(Square kingSquare,
+                                                           Square rookSquare,
+                                                           Square inBetweenFirst,
+                                                           Square inBetweenSecond) {
         return kingSquare.piece.moves == 0 &&
                rookSquare.piece.moves == 0 &&
                inBetweenFirst.isEmpty() &&
                inBetweenSecond.isEmpty();
     }
 
-    private static void checkForCastle() {
+    private static void checkForCastle(Enums.Color pieceColor) {
         Square firstRookSquare;
         Square secondRookSquare;
         Square kingSquare;
 
-        if (playerTurn.equals(BLACK)) {
+        if (pieceColor.equals(BLACK)) {
             firstRookSquare = board[0][0];
             secondRookSquare = board[0][7];
             kingSquare = board[0][4];
@@ -383,16 +390,15 @@ public class Board extends JPanel {
             Square inBetweenFourth = board[0][5];
             Square inBetweenFifth = board[0][6];
 
-            boolean canCastleQueenSide = checkQueenSideCastlingConditions(kingSquare, firstRookSquare, inBetweenFirst, inBetweenSecond, inBetweenThird);
-            boolean canCastleKingSide = checkKingSideCastlingConditions(kingSquare, secondRookSquare, inBetweenFourth, inBetweenFifth);
+            boolean canCastleQueenSide = checkQueenSideCastlingConditions(kingSquare,
+                    firstRookSquare, inBetweenFirst, inBetweenSecond, inBetweenThird);
+            boolean canCastleKingSide = checkKingSideCastlingConditions(kingSquare,
+                    secondRookSquare, inBetweenFourth, inBetweenFifth);
 
-            if (canCastleKingSide) {
-                kingSquare.piece.castled = YES;
+            if (canCastleKingSide)
                 kingSquare.piece.addValidMove(0, 6);
-            } else if (canCastleQueenSide) {
-                kingSquare.piece.castled = YES;
+            else if (canCastleQueenSide)
                 kingSquare.piece.addValidMove(0, 2);
-            }
         } else {
             firstRookSquare = board[7][0];
             secondRookSquare = board[7][7];
@@ -405,16 +411,15 @@ public class Board extends JPanel {
             Square inBetweenFourth = board[7][5];
             Square inBetweenFifth = board[7][6];
 
-            boolean canCastleQueenSide = checkQueenSideCastlingConditions(kingSquare, firstRookSquare, inBetweenFirst, inBetweenSecond, inBetweenThird);
-            boolean canCastleKingSide = checkKingSideCastlingConditions(kingSquare, secondRookSquare, inBetweenFourth, inBetweenFifth);
+            boolean canCastleQueenSide = checkQueenSideCastlingConditions(kingSquare,
+                    firstRookSquare, inBetweenFirst, inBetweenSecond, inBetweenThird);
+            boolean canCastleKingSide = checkKingSideCastlingConditions(kingSquare,
+                    secondRookSquare, inBetweenFourth, inBetweenFifth);
 
-            if (canCastleKingSide) {
-                kingSquare.piece.castled = YES;
+            if (canCastleKingSide)
                 kingSquare.piece.addValidMove(7, 6);
-            } else if (canCastleQueenSide) {
-                kingSquare.piece.castled = YES;
+            else if (canCastleQueenSide)
                 kingSquare.piece.addValidMove(7, 2);
-            }
         }
     }
 
@@ -441,7 +446,6 @@ public class Board extends JPanel {
         }
     }
 
-    /*
     private void changeTheme() {
         themeIndex++;
         if (themeIndex == 7) themeIndex = 0;
@@ -471,5 +475,4 @@ public class Board extends JPanel {
             }
         }
     }
-     */
 }
