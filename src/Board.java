@@ -1,18 +1,17 @@
-import Constants.CONST;
 import Enums.*;
 
-import java.awt.*;
 import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 import java.awt.Color;
 import java.util.List;
-import java.awt.event.*;
 
 import static Enums.Type.*;
+import static Enums.Color.*;
 import static Enums.Castle.*;
 import static Enums.SoundType.*;
 import static Constants.CONST.*;
+import static Enums.CastleType.*;
 
 public class Board extends JPanel {
     public static Enums.Color playerTurn;
@@ -35,7 +34,7 @@ public class Board extends JPanel {
         PreProcess.loadThemes();
         PreProcess.loadImages();
 
-        playerTurn = Enums.Color.WHITE;
+        playerTurn = WHITE;
         board = new Square[ROWS][COLS];
         whitePieces = new ArrayList<>();
         blackPieces = new ArrayList<>();
@@ -49,7 +48,7 @@ public class Board extends JPanel {
         this.setLayout(new GridLayout(ROWS, COLS));
         this.setFocusable(true);
 
-        // KEY BINDINGS
+        /* KEY BINDINGS
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke('t'), "t");
         this.getActionMap().put("t", new AbstractAction() {
             @Override
@@ -57,6 +56,7 @@ public class Board extends JPanel {
                 changeTheme();
             }
         });
+         */
 
         setup();
         SoundEffects.playSound(GAME_START);
@@ -75,73 +75,73 @@ public class Board extends JPanel {
         // CODE TO SET UP THE WHITE PIECES
         Piece piece;
         HashMap<Type, Enums.Color> map = new HashMap<>();
-        map.put(Type.PAWN, Enums.Color.WHITE);
+        map.put(PAWN, WHITE);
 
         for (int col = 0; col < COLS; col++) {
-            piece = new Piece(Type.PAWN, Enums.Color.WHITE, 6, col, 1, imagePaths.get(map));
+            piece = new Piece(PAWN, WHITE, 6, col, 1, imagePaths.get(map));
             addPiece(piece);
         }
 
         map.clear();
-        map.put(Type.ROOK, Enums.Color.WHITE);
-        piece = new Piece(Type.ROOK, Enums.Color.WHITE, 7, 0, 5, imagePaths.get(map));
+        map.put(ROOK, WHITE);
+        piece = new Piece(ROOK, WHITE, 7, 0, 5, imagePaths.get(map));
         addPiece(piece);
-        piece = new Piece(Type.ROOK, Enums.Color.WHITE, 7, 7, 5, imagePaths.get(map));
-        addPiece(piece);
-        map.clear();
-        map.put(Type.KNIGHT, Enums.Color.WHITE);
-        piece = new Piece(Type.KNIGHT, Enums.Color.WHITE, 7, 1, 3, imagePaths.get(map));
-        addPiece(piece);
-        piece = new Piece(Type.KNIGHT, Enums.Color.WHITE, 7, 6, 3, imagePaths.get(map));
+        piece = new Piece(ROOK, WHITE, 7, 7, 5, imagePaths.get(map));
         addPiece(piece);
         map.clear();
-        map.put(Type.BISHOP, Enums.Color.WHITE);
-        piece = new Piece(Type.BISHOP, Enums.Color.WHITE, 7, 2, 3, imagePaths.get(map));
+        map.put(KNIGHT, WHITE);
+        piece = new Piece(KNIGHT, WHITE, 7, 1, 3, imagePaths.get(map));
         addPiece(piece);
-        piece = new Piece(Type.BISHOP, Enums.Color.WHITE, 7, 5, 3, imagePaths.get(map));
-        addPiece(piece);
-        map.clear();
-        map.put(Type.QUEEN, Enums.Color.WHITE);
-        piece = new Piece(Type.QUEEN, Enums.Color.WHITE, 7, 3, 9, imagePaths.get(map));
+        piece = new Piece(KNIGHT, WHITE, 7, 6, 3, imagePaths.get(map));
         addPiece(piece);
         map.clear();
-        map.put(KING, Enums.Color.WHITE);
-        piece = new Piece(KING, Enums.Color.WHITE, 7, 4, Integer.MAX_VALUE, imagePaths.get(map));
+        map.put(BISHOP, WHITE);
+        piece = new Piece(BISHOP, WHITE, 7, 2, 3, imagePaths.get(map));
+        addPiece(piece);
+        piece = new Piece(BISHOP, WHITE, 7, 5, 3, imagePaths.get(map));
+        addPiece(piece);
+        map.clear();
+        map.put(QUEEN, WHITE);
+        piece = new Piece(QUEEN, WHITE, 7, 3, 9, imagePaths.get(map));
+        addPiece(piece);
+        map.clear();
+        map.put(KING, WHITE);
+        piece = new Piece(KING, WHITE, 7, 4, Integer.MAX_VALUE, imagePaths.get(map));
         addPiece(piece);
 
         map.clear();
-        map.put(Type.PAWN, Enums.Color.BLACK);
+        map.put(PAWN, BLACK);
         // CODE TO SET UP THE BLACK PIECES
         for (int col = 0; col < COLS; col++) {
-            piece = new Piece(Type.PAWN, Enums.Color.BLACK, 1, col, 1, imagePaths.get(map));
+            piece = new Piece(PAWN, BLACK, 1, col, 1, imagePaths.get(map));
             addPiece(piece);
         }
 
         map.clear();
-        map.put(Type.ROOK, Enums.Color.BLACK);
-        piece = new Piece(Type.ROOK, Enums.Color.BLACK, 0, 0, 5, imagePaths.get(map));
+        map.put(ROOK, BLACK);
+        piece = new Piece(ROOK, BLACK, 0, 0, 5, imagePaths.get(map));
         addPiece(piece);
-        piece = new Piece(Type.ROOK, Enums.Color.BLACK, 0, 7, 5, imagePaths.get(map));
-        addPiece(piece);
-        map.clear();
-        map.put(Type.KNIGHT, Enums.Color.BLACK);
-        piece = new Piece(Type.KNIGHT, Enums.Color.BLACK, 0, 1, 3, imagePaths.get(map));
-        addPiece(piece);
-        piece = new Piece(Type.KNIGHT, Enums.Color.BLACK, 0, 6, 3, imagePaths.get(map));
+        piece = new Piece(ROOK, BLACK, 0, 7, 5, imagePaths.get(map));
         addPiece(piece);
         map.clear();
-        map.put(Type.BISHOP, Enums.Color.BLACK);
-        piece = new Piece(Type.BISHOP, Enums.Color.BLACK, 0, 2, 3, imagePaths.get(map));
+        map.put(KNIGHT, BLACK);
+        piece = new Piece(KNIGHT, BLACK, 0, 1, 3, imagePaths.get(map));
         addPiece(piece);
-        piece = new Piece(Type.BISHOP, Enums.Color.BLACK, 0, 5, 3, imagePaths.get(map));
-        addPiece(piece);
-        map.clear();
-        map.put(Type.QUEEN, Enums.Color.BLACK);
-        piece = new Piece(Type.QUEEN, Enums.Color.BLACK, 0, 3, 9, imagePaths.get(map));
+        piece = new Piece(KNIGHT, BLACK, 0, 6, 3, imagePaths.get(map));
         addPiece(piece);
         map.clear();
-        map.put(KING, Enums.Color.BLACK);
-        piece = new Piece(KING, Enums.Color.BLACK, 0, 4, Integer.MAX_VALUE, imagePaths.get(map));
+        map.put(BISHOP, BLACK);
+        piece = new Piece(BISHOP, BLACK, 0, 2, 3, imagePaths.get(map));
+        addPiece(piece);
+        piece = new Piece(BISHOP, BLACK, 0, 5, 3, imagePaths.get(map));
+        addPiece(piece);
+        map.clear();
+        map.put(QUEEN, BLACK);
+        piece = new Piece(QUEEN, BLACK, 0, 3, 9, imagePaths.get(map));
+        addPiece(piece);
+        map.clear();
+        map.put(KING, BLACK);
+        piece = new Piece(KING, BLACK, 0, 4, Integer.MAX_VALUE, imagePaths.get(map));
         addPiece(piece);
 
         calculateMoves();
@@ -175,7 +175,7 @@ public class Board extends JPanel {
         Square square = board[piece.row][piece.col];
         square.addPiece(piece);
 
-        if (piece.pieceColor.equals(Enums.Color.BLACK)) {
+        if (piece.pieceColor.equals(BLACK)) {
             blackPieces.add(piece);
         } else {
             whitePieces.add(piece);
@@ -185,7 +185,7 @@ public class Board extends JPanel {
     public static void calculateMoves() {
         for (Piece piece : whitePieces) {
             try {
-                calculate(piece, Enums.Color.WHITE);
+                calculate(piece, WHITE);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -193,7 +193,7 @@ public class Board extends JPanel {
 
         for (Piece piece : blackPieces) {
             try {
-                calculate(piece, Enums.Color.BLACK);
+                calculate(piece, BLACK);
             } catch (Exception e) {
                 System.out.println(e.getMessage());
             }
@@ -283,52 +283,72 @@ public class Board extends JPanel {
         return isInBounds(row, col) && isValidSquare(row, col, color);
     }
 
-    private void changeTheme() {
-        themeIndex++;
-        if (themeIndex == 7) themeIndex = 0;
-        theme = themes.get(themeIndex);
+    public static void movePiece(Square to) {
+        boolean isCastling = isCastling(to);
 
-        for (int row = 0; row < ROWS; row++) {
-            for (int col = 0; col < COLS; col++) {
-                Square square = board[row][col];
-
-                if (row % 2 == 0) {
-                    if (col % 2 == 0) {
-                        square.setBackground(theme[1]);
-                        square.color = theme[1];
-                    } else {
-                        square.setBackground(theme[0]);
-                        square.color = theme[0];
-                    }
-                } else {
-                    if (col % 2 == 0) {
-                        square.setBackground(theme[0]);
-                        square.color = theme[0];
-                    } else {
-                        square.setBackground(theme[1]);
-                        square.color = theme[1];
-                    }
-                }
-            }
+        boolean isEmpty = to.isEmpty();
+        startingSquare.piece = null;
+        startingSquare.addPieceImage(null);
+        pieceToMove.row = to.row;
+        pieceToMove.col = to.col;
+        to.piece = pieceToMove;
+        to.addPieceImage(pieceToMove.imagePath);
+        if (isCastling) {
+            pieceToMove.castled = YES;
+            castle(getCastlingType(to) ? KING_SIDE : QUEEN_SIDE);
+        } else {
+            if (isEmpty)
+                SoundEffects.playSound(MOVE);
+            else
+                SoundEffects.playSound(CAPTURE);
         }
     }
 
-    public static void refresh() {
-        for (int row = 0; row < ROWS; row++) {
-            for (int col = 0; col < COLS; col++) {
-                Square square = Board.board[row][col];
-                Piece piece = square.piece;
-                Color color = square.color;
+    /*
+    true -> king side castling
+    false -> queen side castling
+     */
+    private static boolean getCastlingType(Square to) {
+        return (to.row == 0 && to.col == 6) || (to.row == 7 && to.col == 6);
+    }
 
-                if (piece != null) {
-                    square.addPieceImage(piece.imagePath);
+    private static void castle(CastleType type) {
+        Square rookSquare = null;
+        Square to = null;
+        switch (type) {
+            case KING_SIDE -> {
+                if (playerTurn.equals(WHITE)) {
+                    rookSquare = getSquare(7, 7);
+                    to = getSquare(7, 5);
                 } else {
-                    square.addPieceImage(null);
+                    rookSquare = getSquare(0, 7);
+                    to = getSquare(0, 5);
                 }
-
-                square.setBackground(color);
+            }
+            case QUEEN_SIDE -> {
+                if (playerTurn.equals(WHITE)) {
+                    rookSquare = getSquare(7, 0);
+                    to = getSquare(7, 3);
+                } else {
+                    rookSquare = getSquare(0, 0);
+                    to = getSquare(0, 3);
+                }
             }
         }
+
+        startingSquare = rookSquare;
+        pieceToMove = rookSquare.piece;
+        movePiece(to);
+        SoundEffects.playSound(CASTLE);
+    }
+
+    public static boolean isCastling(Square to) {
+        Piece piece = pieceToMove;
+        return piece.pieceType.equals(KING) &&
+               (piece.canReach(0, 6) ||
+               piece.canReach(0, 2) ||
+               piece.canReach(7, 6) ||
+               piece.canReach(7, 2));
     }
 
     private static boolean checkQueenSideCastlingConditions(Square kingSquare, Square rookSquare, Square inBetweenFirst, Square inBetweenSecond, Square inBetweenThird) {
@@ -351,7 +371,7 @@ public class Board extends JPanel {
         Square secondRookSquare;
         Square kingSquare;
 
-        if (playerTurn.equals(Enums.Color.BLACK)) {
+        if (playerTurn.equals(BLACK)) {
             firstRookSquare = board[0][0];
             secondRookSquare = board[0][7];
             kingSquare = board[0][4];
@@ -397,4 +417,59 @@ public class Board extends JPanel {
             }
         }
     }
+
+    /*
+    This method reset the colors of the chessboard to their
+    original states after a move is made or when the player
+    clicks another piece/empty square.
+     */
+    public static void refresh() {
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                Square square = Board.board[row][col];
+                Piece piece = square.piece;
+                Color color = square.color;
+
+                if (piece != null) {
+                    square.addPieceImage(piece.imagePath);
+                } else {
+                    square.addPieceImage(null);
+                }
+
+                square.setBackground(color);
+            }
+        }
+    }
+
+    /*
+    private void changeTheme() {
+        themeIndex++;
+        if (themeIndex == 7) themeIndex = 0;
+        theme = themes.get(themeIndex);
+
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                Square square = board[row][col];
+
+                if (row % 2 == 0) {
+                    if (col % 2 == 0) {
+                        square.setBackground(theme[1]);
+                        square.color = theme[1];
+                    } else {
+                        square.setBackground(theme[0]);
+                        square.color = theme[0];
+                    }
+                } else {
+                    if (col % 2 == 0) {
+                        square.setBackground(theme[0]);
+                        square.color = theme[0];
+                    } else {
+                        square.setBackground(theme[1]);
+                        square.color = theme[1];
+                    }
+                }
+            }
+        }
+    }
+     */
 }
