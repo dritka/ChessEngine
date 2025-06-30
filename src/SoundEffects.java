@@ -27,7 +27,8 @@ public class SoundEffects {
             case ILLEGAL -> file = new File(ILLEGAL_SOUND);
             case PROMOTE -> file = new File(PROMOTE_SOUND);
             case GAME_START -> file = new File(GAME_START_SOUND);
-            default -> file = null; // this should never ocurr
+            case GAME_END -> file = new File(GAME_END_SOUND);
+            default -> file = null; // this should never occur
         }
 
         return file;

@@ -6,8 +6,8 @@ public class CONST {
     public static final int ROWS = 8;
     public static final int COLS = 8;
     public static final int squareSize = 100;
-    public static final int WIDTH = squareSize * COLS;
-    public static final int HEIGHT = squareSize * ROWS;
+    public static final int CONST_WIDTH = squareSize * COLS;
+    public static final int CONST_HEIGHT = squareSize * ROWS;
     public static final Color TEMP = new Color(235, 61, 61);
 
     // Sound effects paths
@@ -18,6 +18,7 @@ public class CONST {
     public static final String ILLEGAL_SOUND = "sounds\\illegal.wav";
     public static final String CASTLE_SOUND = "sounds\\castle.wav";
     public static final String GAME_START_SOUND = "sounds\\game-start.wav";
+    public static final String GAME_END_SOUND = "sounds\\game-end.wav";
 
     // Config file paths
     public static final String BOARD_THEMES = "config\\board_themes.txt";

@@ -7,5 +7,6 @@ public enum SoundType {
     GAME_START,
     PROMOTE,
     ILLEGAL,
-    CASTLE
+    CASTLE,
+    GAME_END
 }

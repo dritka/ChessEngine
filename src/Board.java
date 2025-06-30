@@ -1,3 +1,4 @@
+import Constants.CONST;
 import Enums.*;
 
 import java.awt.*;
@@ -8,7 +9,6 @@ import java.awt.Color;
 import java.util.List;
 import java.awt.event.*;
 
-import Constants.CONST.*;
 import static Enums.Type.*;
 import static Enums.SoundType.*;
 import static Constants.CONST.*;
@@ -43,7 +43,7 @@ public class Board extends JPanel {
         themeIndex = 0;
         theme = themes.get(themeIndex);
 
-        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        this.setPreferredSize(new Dimension(CONST_WIDTH, CONST_HEIGHT));
         this.setBackground(Color.BLACK);
         this.setLayout(new GridLayout(ROWS, COLS));
         this.setFocusable(true);
