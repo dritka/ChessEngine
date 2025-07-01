@@ -1,11 +1,10 @@
-import java.awt.*;
-
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import static Enums.Color.*;
-import static Constants.CONST.*;
-import static Enums.SoundType.*;
+import static Constants.CONST.TEMP;
+import static Enums.SoundType.ILLEGAL;
 
 public class Square extends JButton implements ActionListener {
     public Piece piece;
@@ -23,6 +22,12 @@ public class Square extends JButton implements ActionListener {
     }
 
     public void addPiece(Piece piece) {
+        if (piece == null) {
+            this.piece = null;
+            addPieceImage(null);
+            return;
+        }
+
         this.piece = piece;
         addPieceImage(piece.imagePath);
     }
@@ -68,26 +73,14 @@ public class Square extends JButton implements ActionListener {
             Board.refresh();
 
             for (int[] valid : piece.validMoves) {
-                Square square = Board.board[valid[0]][valid[1]];
-                if (square.piece != null && !square.piece.pieceColor.equals(piece.pieceColor))
+                Square square = Board.getSquare(valid[0], valid[1]);
+                if (!square.isEmpty() && !square.isTeamPiece(piece))
                     square.setBackground(TEMP);
                 else
                     square.setBackground(Board.themes.get(Board.themeIndex)[2]);
             }
         } else if (checkMoveOrCaptureConditions()) {
             Board.movePiece(this);
-
-            if (this.piece != null) {
-                if (Board.playerTurn.equals(WHITE))
-                    Board.blackPieces.remove(this.piece);
-                else
-                    Board.whitePieces.remove(this.piece);
-            }
-
-            Board.playerTurn = Board.playerTurn.equals(WHITE) ? BLACK : WHITE;
-            Board.pieceToMove.moves += 1;
-            Board.refresh();
-            Board.calculateMoves();
         } else {
             Board.startingSquare = null;
             Board.pieceToMove = null;

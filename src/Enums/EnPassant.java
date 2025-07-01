@@ -1,6 +1,6 @@
 package Enums;
 
-public enum Castle {
+public enum EnPassant {
     NO,
     NOT_ALLOWED,
     YES

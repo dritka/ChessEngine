@@ -1,22 +1,24 @@
-import Enums.*;
+import Enums.Color;
+import Enums.EnPassant;
+import Enums.Type;
 
-import java.util.*;
-
-import static Enums.Type.*;
-import static Enums.Castle.*;
+import java.util.ArrayList;
+import java.util.List;
+import static Enums.EnPassant.*;
 
 public class Piece {
     public Type pieceType;
     public Color pieceColor;
+    public String imagePath;
+    public List<int[]> validMoves;
+    public EnPassant doneEnPassant;
+
     public int row;
     public int col;
     public int value;
     public int moves;
-    public String imagePath;
-    public List<int[]> validMoves;
     public int[][] directions;
-
-    public Castle castled = NOT_ALLOWED;
+    public boolean doneCastled;
 
     public Piece(Type pieceType, Color pieceColor, int row, int col, int value, String imagePath) {
         this.pieceType = pieceType;
@@ -28,8 +30,8 @@ public class Piece {
         this.imagePath = imagePath;
         validMoves = new ArrayList<>();
         directions = calculateDirections();
-
-        if (pieceType.equals(KING)) castled = NO;
+        doneCastled = false;
+        doneEnPassant = NO;
     }
 
     public int[][] calculateDirections() {
@@ -78,5 +80,11 @@ public class Piece {
 
     public void clearValidMoves() {
         validMoves.clear();
+    }
+
+    public void update(Square square) {
+        this.row = square.row;
+        this.col = square.col;
+        this.moves += 1;
     }
 }

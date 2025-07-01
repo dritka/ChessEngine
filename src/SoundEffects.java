@@ -1,7 +1,10 @@
 import Enums.SoundType;
 
-import java.io.*;
-import javax.sound.sampled.*;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import java.io.File;
+
 import static Constants.CONST.*;
 
 public class SoundEffects {
@@ -12,13 +15,14 @@ public class SoundEffects {
             Clip clip = AudioSystem.getClip();
             clip.open(audioStream);
             clip.start();
+            clip.drain(); // wait for the sound to finish
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
     private static File mapSoundWithFile(SoundType soundType) {
-        File file;
+        File file = null;
         switch (soundType) {
             case MOVE -> file = new File(MOVE_SOUND);
             case MOVE_CHECK -> file = new File(MOVE_CHECK_SOUND);
@@ -28,7 +32,6 @@ public class SoundEffects {
             case PROMOTE -> file = new File(PROMOTE_SOUND);
             case GAME_START -> file = new File(GAME_START_SOUND);
             case GAME_END -> file = new File(GAME_END_SOUND);
-            default -> file = null; // this should never occur
         }
 
         return file;

@@ -1,7 +1,11 @@
-import java.awt.*;
-import java.util.*;
 import javax.swing.*;
-import java.awt.event.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
+
+import static Enums.SoundType.PROMOTE;
 import static Enums.Type.*;
 
 public class PromotionWindow extends JFrame implements ActionListener {
@@ -103,6 +107,7 @@ public class PromotionWindow extends JFrame implements ActionListener {
                 Board.whitePieces.add(piece);
                 Main.frame.setEnabled(true);
                 this.dispose();
+                SoundEffects.playSound(PROMOTE);
             } else
                 JOptionPane.showMessageDialog(this, "Choose an option!", "Error", JOptionPane.ERROR_MESSAGE);
         } if (source.equals(queenButton)) {

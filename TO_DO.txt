@@ -1,4 +1,8 @@
-Functionalities
-- Test castling?
-- Implement en passant
-- Implement pawn promotion
+Functionalities that need to be implemented
+- In the case when a check is given, stop the user from making a move
+that leaves the king vulnerable to attack again
+- Test the application by playing some games
+- Review the code and make final adjustments
+- Implement the minimax algorithm
+- Optimize minimax with alpha-beta pruning
+- Add more piece themes
