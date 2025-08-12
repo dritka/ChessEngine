@@ -14,6 +14,6 @@ Features to be implemented
 that leaves the king vulnerable to attack again
 
 --> Remarks
-Currently the way the app is structures seems a bit messy and not very easily modifiable.
+Currently the way the app is structured seems a bit messy and not very easily modifiable.
 It should be refactored in a way such that it is easier to integrate new feature into the
 application, such as new game modes, new moves and so on.
